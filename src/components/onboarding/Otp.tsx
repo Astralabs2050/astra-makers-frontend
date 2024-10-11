@@ -1,0 +1,64 @@
+"use client";
+import { logo } from "@/image";
+import Button from "@/shared/Button";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import OTPInput from "react-otp-input";
+
+export default function Otp() {
+  const route = useRouter();
+  const [otp, setOtp] = useState<string>("");
+  return (
+    <div className="w-[48rem]">
+      <div className="w-[15rem] mx-auto">
+        <Image
+          src={logo}
+          alt=""
+          height={200}
+          width={200}
+          style={{ width: "100%", height: "auto" }}
+        />
+      </div>
+      <h1 className="text-center text-[3.2rem] font-[500] mt-[3.2rem] mb-[1.6rem]">
+        OTP Verification
+      </h1>
+      <p className="text-[1.8rem] text-astraLightBlack text-center mb-[3.2rem]">
+        We have sent a verification code to email address
+        <br />
+        <span className="text-black text-[1.8rem] font-[500]">
+          name@example.com.{" "}
+          <span className="text-black text-[1.8rem] underline">
+            Wrong Email?
+          </span>
+        </span>{" "}
+      </p>
+      <OTPInput
+        value={otp}
+        onChange={setOtp}
+        numInputs={4}
+        renderSeparator={<span> </span>}
+        renderInput={(props) => <input {...props} />}
+        inputStyle={{
+          fontSize: "24px",
+          height: "58px",
+          width: "102px",
+          border: "1px rgba(208, 213, 221, 1) solid",
+          marginRight: "16px",
+          borderRadius: "10px",
+          textAlign: "left",
+          paddingLeft: "20px",
+        }}
+      />
+      <Button
+        action="Submit"
+        width="w-[100%] mt-[3rem] mb-[2rem]"
+        handleClick={() => {
+          route.push("/niche");
+        }}
+        fontSize="text-[1.6rem]"
+        isDisabled={otp?.length < 4}
+      />
+    </div>
+  );
+}

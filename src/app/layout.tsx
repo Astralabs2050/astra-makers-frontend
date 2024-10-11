@@ -10,7 +10,7 @@ const clashGrotesk = localFont({
 
 export const metadata: Metadata = {
   title: "Makers Dashboard",
-  description: "A place for every tailor and fashion designer",
+  description: "Fashion for the future",
 };
 
 export default function RootLayout({
@@ -20,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${clashGrotesk.variable} antialiased`}>{children}</body>
+      <body className={`${clashGrotesk.variable} antialiased bg-astraOffWhite`}>
+        {children}
+      </body>
     </html>
   );
 }
