@@ -26,19 +26,40 @@ export default function Register() {
         .required("Full Name is required"),
 
       password: Yup.string()
+        .required("Password is required")
         .min(8, "Password must be at least 8 characters long")
-        .required("Password is required"),
+        .matches(
+          /^(?=.*[0-9])(?=.*[A-Z]).{8,}$/,
+          "Password must contain at least one uppercase letter and one number"
+        ),
     }),
     validateOnMount: true,
     onSubmit: (values) => {
-      console.log("Form submitted with values:", values);
+      const onboardingData = {
+        email: values.email,
+        fullName: values.fullName,
+        password: values.password,
+        profileImage: "",
+        location: "",
+        category: "",
+        skills: [],
+        creatorType: "digital",
+        work: [],
+        projects: [],
+      };
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "storedOnboarding",
+          JSON.stringify(onboardingData)
+        );
+      }
       route.push("/verification");
     },
   });
 
   return (
-    <div className="py-[8rem] px-[14rem] bg-white">
-      <h1 className="text-center text-[30px] font-[500]">
+    <div className="py-[8rem] px-[14rem] w-[100%] bg-white">
+      <h1 className="text-center text-[30px] font-bold">
         Sign Up to Astra as a Talent
       </h1>
       <p className="text-[1.8rem] text-astraGray text-center">
@@ -48,7 +69,7 @@ export default function Register() {
         <div>
           <Image src={googleLogo} alt="" height={20} width={20} />
         </div>
-        <p className="text-black text-[1.6rem] font-[600]">
+        <p className="text-black text-[1.6rem] font-bold">
           Continue with Google
         </p>
       </button>
@@ -92,6 +113,7 @@ export default function Register() {
         }
         value={register.values.password}
         type="password"
+        password
       />
       <p className="text-[1.2rem] text-astraLightBlack">
         Password must have at least 8 characters, 1 uppercase letter and 1

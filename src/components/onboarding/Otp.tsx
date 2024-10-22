@@ -9,6 +9,8 @@ import OTPInput from "react-otp-input";
 export default function Otp() {
   const route = useRouter();
   const [otp, setOtp] = useState<string>("");
+
+  const [focusedInput, setFocusedInput] = useState<number | null>(null);
   return (
     <div className="w-[48rem]">
       <div className="w-[15rem] mx-auto">
@@ -20,7 +22,7 @@ export default function Otp() {
           style={{ width: "100%", height: "auto" }}
         />
       </div>
-      <h1 className="text-center text-[3.2rem] font-[500] mt-[3.2rem] mb-[1.6rem]">
+      <h1 className="text-center text-[3.2rem] font-bold mt-[3.2rem] mb-[1.6rem]">
         OTP Verification
       </h1>
       <p className="text-[1.8rem] text-astraLightBlack text-center mb-[3.2rem]">
@@ -37,18 +39,29 @@ export default function Otp() {
         value={otp}
         onChange={setOtp}
         numInputs={4}
-        renderSeparator={<span> </span>}
-        renderInput={(props) => <input {...props} />}
-        inputStyle={{
-          fontSize: "24px",
-          height: "58px",
-          width: "102px",
-          border: "1px rgba(208, 213, 221, 1) solid",
-          marginRight: "16px",
-          borderRadius: "10px",
-          textAlign: "left",
-          paddingLeft: "20px",
-        }}
+        renderSeparator={<span>-</span>}
+        renderInput={(props, index) => (
+          <input
+            {...props}
+            onFocus={() => setFocusedInput(index)}
+            onBlur={() => setFocusedInput(null)}
+            style={{
+              fontSize: "24px",
+              height: "58px",
+              width: "102px",
+              border:
+                focusedInput === index
+                  ? "2px solid black"
+                  : "1px solid rgba(208, 213, 221, 1)",
+              marginRight: "16px",
+              borderRadius: "10px",
+              textAlign: "left",
+              paddingLeft: "20px",
+              transition: "border 0.3s ease",
+              outline: "none",
+            }}
+          />
+        )}
       />
       <Button
         action="Submit"

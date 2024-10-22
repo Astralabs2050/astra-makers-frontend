@@ -1,7 +1,7 @@
 "use client";
-import { arrowLeft, logo, tick } from "@/image";
+import { logo, tick } from "@/image";
 import Image from "next/image";
-import Link from "next/link";
+import GoBack from "./GoBack";
 interface OnboardFrameProps {
   link: string;
   pageNumber: number;
@@ -20,12 +20,7 @@ export default function OnboardFrame({
       </div>
       <div className="bg-white w-[70%] mx-auto px-[4rem] py-[5rem] rounded-[2rem]">
         <div className="flex justify-between items-start">
-          <Link href={link} passHref>
-            <div className="flex gap-x-[1rem]">
-              <Image src={arrowLeft} alt="" height={24} width={24} />
-              <p className="text-[1.6rem] font-[500]">Go Back</p>
-            </div>
-          </Link>
+          <GoBack link={link} />
           <div className="flex items-center">
             <div
               className={`${

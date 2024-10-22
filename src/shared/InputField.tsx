@@ -13,6 +13,11 @@ interface InputFieldProps {
   value: string | number;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onBlur?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
+  onKeydown?: React.KeyboardEventHandler<HTMLInputElement>;
+  children?: React.ReactNode;
+  borderRadius?: string;
+  fontSize?: string;
+  marginBottom?: string;
 }
 
 export default function InputField({
@@ -23,8 +28,13 @@ export default function InputField({
   name,
   onChange,
   onBlur,
+  onKeydown,
   value,
   isDisabled,
+  borderRadius,
+  fontSize,
+  marginBottom,
+  children,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -33,10 +43,10 @@ export default function InputField({
   };
   if (password) {
     return (
-      <div className="w-[100%] my-[1.5rem]">
+      <div className="w-[100%] mb-[3rem]">
         <div
           className={`${
-            error ? "border-red-700" : "border-astraGrey "
+            error ? "border-astraRed" : "border-astraGrey "
           } border-[0.1rem] py-[1.8rem] px-[2.4rem] rounded-[.8rem] w-[100%] flex items-center`}
         >
           <div className="w-[100%] mr-[1rem]">
@@ -47,7 +57,7 @@ export default function InputField({
               onChange={onChange as ChangeEventHandler<HTMLInputElement>}
               onBlur={onBlur}
               value={value}
-              className="text-[1.6rem] text-astraLightBlack w-[100%] outline-none bg-transparent"
+              className="text-[1.6rem] text-black w-[100%] outline-none bg-transparent"
               disabled={isDisabled}
             />
           </div>
@@ -64,17 +74,22 @@ export default function InputField({
             />
           </div>
         </div>
-        {error && <div className="text-[1.3rem] text-red-700 ">{error}</div>}
+        {error && <div className="text-[1.3rem] text-astraRed ">{error}</div>}
       </div>
     );
   }
   return (
-    <div className="my-[1.5rem] w-[100%]">
+    <div className={`${marginBottom ? marginBottom : "mb-[3rem]"} w-[100%]`}>
       <div
         className={`${
-          error ? "border-red-700" : "border-astraGrey "
-        } border-[0.1rem] py-[1.8rem] px-[2.4rem] rounded-[.8rem] w-[100%] flex items-center`}
+          error ? "border-astraRed" : "border-astraGrey "
+        } border-[0.1rem] py-[1.7rem] px-[2.4rem] ${
+          borderRadius ? borderRadius : "rounded-[.8rem]"
+        } w-[100%]`}
       >
+        {children && (
+          <div className="w-[100%] flex flex-wrap gap-[1.2rem]">{children}</div>
+        )}
         <div className="w-[100%]">
           <input
             type={type}
@@ -82,13 +97,16 @@ export default function InputField({
             name={name}
             onChange={onChange as ChangeEventHandler<HTMLInputElement>}
             onBlur={onBlur}
+            onKeyDown={onKeydown}
             value={value}
-            className="text-[1.6rem] text-astraLightBlack w-[100%] outline-none bg-transparent"
+            className={`${
+              fontSize ? fontSize : "text-[1.6rem]"
+            } text-black w-[100%] outline-none bg-transparent`}
             disabled={isDisabled}
           />
         </div>
       </div>
-      {error && <div className="text-[1.3rem] text-red-700">{error}</div>}
+      {error && <div className="text-[1.3rem] text-astraRed">{error}</div>}
     </div>
   );
 }

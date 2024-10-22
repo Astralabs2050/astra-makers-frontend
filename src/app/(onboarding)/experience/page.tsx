@@ -1,8 +1,8 @@
-import AboutForm from "@/components/onboarding/About";
+import WorkExperience from "@/components/onboarding/WorkExperience";
 import LoaderSvg from "@/shared/LoaderSvg";
 import { Suspense } from "react";
 
-export default function About() {
+export default function Experience() {
   return (
     <div>
       <Suspense
@@ -12,7 +12,7 @@ export default function About() {
           </div>
         }
       >
-        <AboutForm />
+        <WorkExperience />
       </Suspense>
     </div>
   );
