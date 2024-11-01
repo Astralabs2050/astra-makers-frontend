@@ -1,15 +1,23 @@
 "use client";
 
 import { googleLogo } from "@/image";
+import { signupStepOne } from "@/network/auth";
 import Button from "@/shared/Button";
 import InputField from "@/shared/InputField";
+import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 export default function Register() {
   const route = useRouter();
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: signupStepOne,
+  });
+
   const register = useFormik({
     initialValues: {
       email: "",
@@ -34,7 +42,7 @@ export default function Register() {
         ),
     }),
     validateOnMount: true,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const onboardingData = {
         email: values.email,
         fullName: values.fullName,
@@ -53,7 +61,17 @@ export default function Register() {
           JSON.stringify(onboardingData)
         );
       }
-      route.push("/verification");
+      const res = await mutateAsync({
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+      });
+      if (res && "error" in res) {
+        toast.error(res.error);
+      } else {
+        toast.success(res.message);
+        route.push("/verification");
+      }
     },
   });
 
@@ -124,7 +142,8 @@ export default function Register() {
         width="w-[100%] mt-[3rem] mb-[2rem]"
         handleClick={register.handleSubmit}
         fontSize="text-[1.6rem]"
-        isDisabled={!register.isValid}
+        animate={isPending}
+        isDisabled={!register.isValid || isPending}
       />
       <p className="text-[1.5rem] text-astraLightBlack text-center">
         You acknowledge that you read, and agree to our <br />

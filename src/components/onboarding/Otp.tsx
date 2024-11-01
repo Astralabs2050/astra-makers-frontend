@@ -1,16 +1,46 @@
 "use client";
 import { logo } from "@/image";
+import { verifyOTP } from "@/network/auth";
 import Button from "@/shared/Button";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import OTPInput from "react-otp-input";
 
 export default function Otp() {
   const route = useRouter();
   const [otp, setOtp] = useState<string>("");
-
   const [focusedInput, setFocusedInput] = useState<number | null>(null);
+  const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedOnboarding = localStorage.getItem("storedOnboarding");
+      if (storedOnboarding) {
+        const parsedOnboarding = JSON.parse(storedOnboarding);
+        setEmail(parsedOnboarding.email);
+      }
+    }
+  }, []);
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: verifyOTP,
+  });
+
+  const handleOtpVerification = async () => {
+    const res = await mutateAsync({
+      otp: otp,
+      email: email,
+    });
+    if ((res && "error" in res) || (res && res.status === false)) {
+      toast.error(res.message ?? "");
+    } else {
+      toast.success(res.message);
+      route.push("/niche");
+    }
+  };
   return (
     <div className="w-[48rem]">
       <div className="w-[15rem] mx-auto">
@@ -29,10 +59,13 @@ export default function Otp() {
         We have sent a verification code to email address
         <br />
         <span className="text-black text-[1.8rem] font-[500]">
-          name@example.com.{" "}
-          <span className="text-black text-[1.8rem] underline">
+          {email}.{" "}
+          <Link
+            href="/resend-email"
+            className="text-black text-[1.8rem] underline"
+          >
             Wrong Email?
-          </span>
+          </Link>
         </span>{" "}
       </p>
       <OTPInput
@@ -66,11 +99,10 @@ export default function Otp() {
       <Button
         action="Submit"
         width="w-[100%] mt-[3rem] mb-[2rem]"
-        handleClick={() => {
-          route.push("/niche");
-        }}
+        handleClick={handleOtpVerification}
         fontSize="text-[1.6rem]"
-        isDisabled={otp?.length < 4}
+        animate={isPending}
+        isDisabled={otp?.length < 4 || isPending}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import * as Yup from "yup";
 
 export default function WorkExperience() {
   const route = useRouter();
@@ -38,6 +39,65 @@ export default function WorkExperience() {
       endMonth: "",
       endYear: "",
     },
+    validationSchema: Yup.object().shape({
+      employer: Yup.string().required("Employer is required"),
+      jobTitle: Yup.string().required("Job title is required"),
+      description: Yup.string().required("Description is required"),
+      startMonth: Yup.string()
+        .required("Start month is required")
+        .oneOf(
+          [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ],
+          "Start month must be a valid month (January - December)"
+        ),
+      startYear: Yup.number()
+        .required("Start year is required")
+        .min(1900, "Start year must be greater than or equal to 1900")
+        .max(new Date().getFullYear(), `Start year cannot be in the future`),
+      endMonth: Yup.string()
+        .required("End month is required")
+        .oneOf(
+          [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ],
+          "End month must be a valid month (January - December)"
+        ),
+      endYear: Yup.number()
+        .required("End year is required")
+        .min(1900, "End year must be greater than or equal to 1900")
+        .max(new Date().getFullYear(), "End year cannot be in the future")
+        .test(
+          "is-greater",
+          "End year must be greater than start year",
+          function (value) {
+            const { startYear } = this.parent;
+            return value >= startYear;
+          }
+        ),
+    }),
     validateOnMount: true,
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -72,7 +132,7 @@ export default function WorkExperience() {
       }
       setSideBar(false);
       experienceForm.resetForm();
-      setEditingIndex(null); // Reset editing state
+      setEditingIndex(null);
     },
   });
 
@@ -225,7 +285,12 @@ export default function WorkExperience() {
                 placeholder="What is the name of your employer?"
                 onChange={experienceForm.handleChange}
                 onBlur={experienceForm.handleBlur}
-                error={null}
+                error={
+                  experienceForm.touched.employer &&
+                  experienceForm.errors.employer
+                    ? experienceForm.errors.employer
+                    : null
+                }
                 value={experienceForm.values.employer}
                 type="text"
                 borderRadius="rounded-full"
@@ -240,7 +305,12 @@ export default function WorkExperience() {
                 placeholder="What is your role?"
                 onChange={experienceForm.handleChange}
                 onBlur={experienceForm.handleBlur}
-                error={null}
+                error={
+                  experienceForm.touched.jobTitle &&
+                  experienceForm.errors.jobTitle
+                    ? experienceForm.errors.jobTitle
+                    : null
+                }
                 value={experienceForm.values.jobTitle}
                 type="text"
                 borderRadius="rounded-full"
@@ -256,7 +326,12 @@ export default function WorkExperience() {
                   placeholder="Month"
                   onChange={experienceForm.handleChange}
                   onBlur={experienceForm.handleBlur}
-                  error={null}
+                  error={
+                    experienceForm.touched.startMonth &&
+                    experienceForm.errors.startMonth
+                      ? experienceForm.errors.startMonth
+                      : null
+                  }
                   value={experienceForm.values.startMonth}
                   type="text"
                   borderRadius="rounded-full"
@@ -268,7 +343,12 @@ export default function WorkExperience() {
                   placeholder="Year"
                   onChange={experienceForm.handleChange}
                   onBlur={experienceForm.handleBlur}
-                  error={null}
+                  error={
+                    experienceForm.touched.startYear &&
+                    experienceForm.errors.startYear
+                      ? experienceForm.errors.startYear
+                      : null
+                  }
                   value={experienceForm.values.startYear}
                   type="text"
                   borderRadius="rounded-full"
@@ -285,7 +365,12 @@ export default function WorkExperience() {
                   placeholder="Month"
                   onChange={experienceForm.handleChange}
                   onBlur={experienceForm.handleBlur}
-                  error={null}
+                  error={
+                    experienceForm.touched.endMonth &&
+                    experienceForm.errors.endMonth
+                      ? experienceForm.errors.endMonth
+                      : null
+                  }
                   value={experienceForm.values.endMonth}
                   type="text"
                   borderRadius="rounded-full"
@@ -297,7 +382,12 @@ export default function WorkExperience() {
                   placeholder="Year"
                   onChange={experienceForm.handleChange}
                   onBlur={experienceForm.handleBlur}
-                  error={null}
+                  error={
+                    experienceForm.touched.endYear &&
+                    experienceForm.errors.endYear
+                      ? experienceForm.errors.endYear
+                      : null
+                  }
                   value={experienceForm.values.endYear}
                   type="text"
                   borderRadius="rounded-full"

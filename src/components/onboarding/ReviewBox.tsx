@@ -1,13 +1,16 @@
 "use client";
 
 import { cancelIcon, deleteIcon, uploadImage } from "@/image";
+import { signupStepTwo } from "@/network/auth";
 import Button from "@/shared/Button";
 import InputField from "@/shared/InputField";
 import OnboardFrame from "@/shared/OnboardFrame";
+import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SetStateAction, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 export default function ReviewBox() {
@@ -154,6 +157,28 @@ export default function ReviewBox() {
       }
     }
   }, []);
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: signupStepTwo,
+  });
+  const handleMakerSignup = async () => {
+    const res = await mutateAsync({
+      email: review.values.email,
+      profileImage: preview ?? "",
+      location: review.values.location,
+      category: catArry,
+      skills: skillsArry,
+      creatorType: review.values.category,
+      work: experiences,
+      projects: bestWorks,
+    });
+    if ((res && "error" in res) || (res && res.status === false)) {
+      toast.error(res.message ?? "Error registering creator");
+    } else {
+      toast.success(res.message);
+      route.push("/confirmation");
+    }
+  };
 
   return (
     <OnboardFrame link="/portfolio" pageNumber={4}>
@@ -385,10 +410,10 @@ export default function ReviewBox() {
         <Button
           action="Save & Complete"
           width="w-[100%] mt-[3rem] mb-[2rem]"
-          handleClick={() => {
-            route.push("/confirmation");
-          }}
+          handleClick={handleMakerSignup}
           fontSize="text-[1.6rem]"
+          isDisabled={isPending}
+          animate={isPending}
         />
       </div>
     </OnboardFrame>

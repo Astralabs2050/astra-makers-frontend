@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelIcon, uploadImage } from "@/image";
+import { cancelIcon, uploadImage, webIcon } from "@/image";
 import Button from "@/shared/Button";
 import InputField from "@/shared/InputField";
 import LoaderSvg from "@/shared/LoaderSvg";
@@ -181,6 +181,17 @@ export default function AboutFormForm() {
                   onClick={() => handleToggle(item)}
                 />
               ))}
+        </div>
+        <div className="w-full mt-[4rem]">
+          <p className="mb-[1rem] text-[1.8rem]">
+            Social Media / Portfolio link
+          </p>
+          <div className="border border-astraGrey rounded-[.5rem] flex items-center gap-x-[2rem] px-[2.5rem] py-[1.5rem] w-[100%]">
+            <Image src={webIcon} alt="" width={24} height={24} />
+            <div className="w-[100%]">
+              <input className="bg-transparent outline-none text-[1.6rem] text-astraLightBlack w-[100%]" />
+            </div>
+          </div>
         </div>
         <p className="mt-[5rem] text-[2rem] text-center">
           What are your skills?

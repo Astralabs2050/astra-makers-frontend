@@ -1,18 +1,23 @@
 "use client";
+import { login } from "@/network/auth";
 import Button from "@/shared/Button";
 import InputField from "@/shared/InputField";
+import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import * as Yup from "yup";
 
 export default function Login() {
   const route = useRouter();
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: login,
+  });
 
   //Login form
   const loginForm = useFormik({
     initialValues: {
       email: "",
-      fullName: "",
       password: "",
     },
     validationSchema: Yup.object({
@@ -29,8 +34,16 @@ export default function Login() {
         ),
     }),
     validateOnMount: true,
-    onSubmit: () => {
-      route.push("/dashboard");
+    onSubmit: async (values) => {
+      const res = await mutateAsync({
+        email: values.email,
+        password: values.password,
+      });
+      if ((res && "error" in res) || (res && res.status === false)) {
+        toast.error(res.message ?? "");
+      } else {
+        route.push("/dashboard");
+      }
     },
   });
 
@@ -75,7 +88,8 @@ export default function Login() {
         width="w-[100%] mt-[3rem] mb-[2rem]"
         handleClick={loginForm.handleSubmit}
         fontSize="text-[1.6rem]"
-        isDisabled={!loginForm.isValid}
+        animate={isPending}
+        isDisabled={!loginForm.isValid || isPending}
       />
       <p className="text-[1.5rem] text-astraLightBlack text-center">
         Don&apos;t have an account? <br /> Sign up{" "}
