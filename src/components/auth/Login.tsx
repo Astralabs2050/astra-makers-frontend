@@ -1,5 +1,6 @@
 "use client";
 import { login } from "@/network/auth";
+import { TOKEN_NAME, USER_PROFILE } from "@/network/constant";
 import Button from "@/shared/Button";
 import InputField from "@/shared/InputField";
 import { useMutation } from "@tanstack/react-query";
@@ -15,7 +16,7 @@ export default function Login() {
   });
 
   //Login form
-  const loginForm = useFormik({
+  const loginForm = useFormik<{ email: string; password: string }>({
     initialValues: {
       email: "",
       password: "",
@@ -41,7 +42,11 @@ export default function Login() {
       });
       if ((res && "error" in res) || (res && res.status === false)) {
         toast.error(res.message ?? "");
-      } else {
+      } else if (res && res.data) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem(TOKEN_NAME, res.data?.token);
+          sessionStorage.setItem(USER_PROFILE, JSON.stringify(res.data));
+        }
         route.push("/dashboard");
       }
     },
@@ -92,10 +97,19 @@ export default function Login() {
         isDisabled={!loginForm.isValid || isPending}
       />
       <p className="text-[1.5rem] text-astraLightBlack text-center">
-        Don&apos;t have an account? <br /> Sign up{" "}
+        Don&apos;t have an account? Sign up{" "}
         <span
           className="text-black text-[1.5rem] underline cursor-pointer"
           onClick={() => route.push("/signup")}
+        >
+          here
+        </span>
+      </p>
+      <p className="text-[1.5rem] text-astraLightBlack text-center">
+        Forgot password? Click{" "}
+        <span
+          className="text-black text-[1.5rem] underline cursor-pointer"
+          onClick={() => route.push("/forgot-password")}
         >
           here
         </span>

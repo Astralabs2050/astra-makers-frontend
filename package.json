@@ -11,6 +11,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.59.16",
     "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
+    "dayjs-ext": "^2.1.1",
     "formik": "^2.4.6",
     "next": "14.2.15",
     "react": "^18",

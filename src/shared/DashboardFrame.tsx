@@ -146,7 +146,7 @@ export default function DashboardFrame({
                   </div>
                   {minimize || (
                     <p
-                      className={`text-[1.6rem] font-bold ${
+                      className={`text-[1.6rem] ${
                         item.active ? "text-white" : "text-astraTextGrey"
                       }`}
                     >

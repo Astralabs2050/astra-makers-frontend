@@ -46,7 +46,6 @@ export default function Register() {
       const onboardingData = {
         email: values.email,
         fullName: values.fullName,
-        password: values.password,
         profileImage: "",
         location: "",
         category: "",

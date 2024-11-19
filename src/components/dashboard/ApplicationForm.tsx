@@ -1,41 +1,85 @@
 "use client";
 
-import {
-  logo,
-  portfolioSample1,
-  portfolioSample2,
-  webIcon,
-  workSelected,
-} from "@/image";
+import { logo, webIcon, workSelected } from "@/image";
 import Button from "@/shared/Button";
 import GoBack from "@/shared/GoBack";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { applyToJob, getUserProjects } from "@/network/dashboard";
+import { Query } from "@/network/constant";
+import LoaderSvg from "@/shared/LoaderSvg";
+import toast from "react-hot-toast/headless";
 
 export default function ApplicationForm() {
   const route = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const [modal, setModal] = useState<boolean>(false);
-  const [portfolioItems, setPortfolioItems] = useState([
-    {
-      title: "Astronaut 3D Rendering",
-      images: [portfolioSample1, portfolioSample2],
-      isSelected: false,
-    },
-    {
-      title: "Astronaut 3D Rendering",
-      images: [portfolioSample1, portfolioSample2],
-      isSelected: false,
-    },
-  ]);
+  const [portfolioItems, setPortfolioItems] = useState<string[]>([]);
+  const [amount, setAmounts] = useState<{ amount: number; minAmount: number }>({
+    amount: 0,
+    minAmount: 0,
+  });
 
-  const handleSelect = (index: number) => {
-    const updatedItems = portfolioItems.map((item, i) =>
-      i === index ? { ...item, isSelected: !item.isSelected } : item
-    );
-    setPortfolioItems(updatedItems);
+  const { data, isPending } = useQuery({
+    queryFn: getUserProjects,
+    queryKey: [Query.GET_USER_PROJECTS_QUERY],
+  });
+
+  const projects =
+    data && data.status === true && !("error" in data) ? data.data : null;
+
+  const handleSelect = (id: string) => {
+    setPortfolioItems((prevSelected) => {
+      if (prevSelected.includes(id)) {
+        return prevSelected.filter((selectedId) => selectedId !== id);
+      } else {
+        return [...prevSelected, id];
+      }
+    });
   };
+
+  const { mutateAsync, isPending: isPendingApply } = useMutation({
+    mutationFn: applyToJob,
+  });
+  const handleApply = async () => {
+    const res = await mutateAsync({
+      jobId: id ?? "",
+      amount: amount.amount,
+      minAmount: amount.minAmount,
+      projectIds: portfolioItems,
+    });
+    if ((res && "error" in res) || (res && res.status === false)) {
+      toast.error(res.message ?? "");
+    } else if (res && res.data) {
+      toast.success(res.message);
+      route.push("/job-confirmation");
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAmount = localStorage.getItem("prices");
+      if (storedAmount) {
+        const parsedAmount = JSON.parse(storedAmount);
+        setAmounts({
+          amount: parsedAmount.amount,
+          minAmount: parsedAmount.minAmount,
+        });
+      }
+    }
+  }, []);
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center py-[4rem] w-[100%]">
+        <LoaderSvg color="#0000000" />
+      </div>
+    );
+  }
   return (
     <div>
       <div className="px-[5rem] pt-[3rem] pb-[4rem]">
@@ -43,7 +87,7 @@ export default function ApplicationForm() {
       </div>
       <div className="bg-white w-[70%] mx-auto px-[4rem] py-[5rem] rounded-[2rem]">
         <div className="flex justify-between items-start ">
-          <GoBack link="/job-details" />{" "}
+          <GoBack link={`/job-details?id=${id}`} />{" "}
           <p className="text-[3rem] font-bold">Send Application</p>
           <div className="w-[8rem]"></div>
         </div>
@@ -52,38 +96,44 @@ export default function ApplicationForm() {
             Select project(s) to share with creator
           </p>
           <div className="mt-[2rem]">
-            {portfolioItems.map((item, index) => (
-              <div
-                key={index}
-                className={`${
-                  item.isSelected ? "border-black" : "border-astraBorderGrey"
-                } p-[2rem] w-[50rem] mx-auto  rounded-[1rem] mb-[2rem] border`}
-                onClick={() => handleSelect(index)}
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-[1.8rem]">{item.title}</p>
-                  {item.isSelected && (
-                    <div>
-                      <Image src={workSelected} alt="" width={24} height={24} />
-                    </div>
-                  )}
+            {projects &&
+              projects.map((item, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    item.id ? "border-black" : "border-astraBorderGrey"
+                  } p-[2rem] w-[50rem] mx-auto  rounded-[1rem] mb-[2rem] border`}
+                  onClick={() => handleSelect(item.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-[1.8rem]">{item.title}</p>
+                    {portfolioItems.includes(item.id) && (
+                      <div>
+                        <Image
+                          src={workSelected}
+                          alt=""
+                          width={24}
+                          height={24}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <hr className="my-[1.4rem]" />
+                  <div className="flex flex-wrap">
+                    {item?.media?.map((pix, index) => (
+                      <div key={index} className="w-[48%]  mx-auto">
+                        <Image
+                          src={""}
+                          alt=""
+                          width={200}
+                          height={200}
+                          style={{ width: "100%", height: "auto" }}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <hr className="my-[1.4rem]" />
-                <div className="flex flex-wrap">
-                  {item.images.map((pix, index) => (
-                    <div key={index} className="w-[48%]  mx-auto">
-                      <Image
-                        src={pix}
-                        alt=""
-                        width={200}
-                        height={200}
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div className="w-[55%] mx-auto">
             <p className="mb-[1rem] text-[1.8rem]">Portfolio link</p>
@@ -106,13 +156,11 @@ export default function ApplicationForm() {
       </div>
       <ConfirmationModal
         isVisible={modal}
-        isLoading={false}
+        isLoading={isPendingApply}
         handleCancel={() => {
           setModal(false);
         }}
-        handleProceed={() => {
-          route.push("/job-confirmation");
-        }}
+        handleProceed={handleApply}
       />
     </div>
   );

@@ -39,8 +39,28 @@ export interface SignInRequest {
   email: string;
   password: string;
 }
+export interface SignInResponse {
+  id: string;
+  email: string;
+  verified: boolean;
+  active: boolean;
+  lastseen: string | null;
+  isOtpVerified: boolean;
+  otpCreatedAt: string;
+  isOtpExp: boolean;
+  isAdmin: boolean;
+  userType: string | null;
+  createdAt: string;
+  updatedAt: string;
+  token: string;
+}
 export interface ResendOtpRequest {
   email: string;
+}
+interface ResetPasswordRequest {
+  otp: string;
+  email: string;
+  password: string;
 }
 export const signupStepOne = async (
   payload: SignUpOneRequest
@@ -65,12 +85,30 @@ export const signupStepTwo = async (
 
 export const login = async (
   payload: SignInRequest
-): Promise<BaseResponse<unknown>> => {
-  return API.post<SignInRequest, unknown>(Endpoints.LOGIN, payload);
+): Promise<BaseResponse<SignInResponse>> => {
+  return API.post<SignInRequest, SignInResponse>(Endpoints.LOGIN, payload);
 };
 
 export const resendOtp = async (
   payload: ResendOtpRequest
 ): Promise<BaseResponse<unknown>> => {
   return API.post<ResendOtpRequest, unknown>(Endpoints.RESEND_OTP, payload);
+};
+
+export const forgotPassword = async (
+  payload: ResendOtpRequest
+): Promise<BaseResponse<unknown>> => {
+  return API.post<ResendOtpRequest, unknown>(
+    Endpoints.FORGOT_PASSWORD,
+    payload
+  );
+};
+
+export const resetPassword = async (
+  payload: ResetPasswordRequest
+): Promise<BaseResponse<unknown>> => {
+  return API.patch<ResetPasswordRequest, unknown>(
+    Endpoints.RESET_PASSWORD,
+    payload
+  );
 };
