@@ -1,6 +1,6 @@
 "use client";
 
-import { logo, webIcon, workSelected } from "@/image";
+import { logo, workSelected } from "@/image";
 import Button from "@/shared/Button";
 import GoBack from "@/shared/GoBack";
 import Image from "next/image";
@@ -12,6 +12,8 @@ import { applyToJob, getUserProjects } from "@/network/dashboard";
 import { Query } from "@/network/constant";
 import LoaderSvg from "@/shared/LoaderSvg";
 import toast from "react-hot-toast/headless";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function ApplicationForm() {
   const route = useRouter();
@@ -19,9 +21,15 @@ export default function ApplicationForm() {
   const id = searchParams.get("id");
   const [modal, setModal] = useState<boolean>(false);
   const [portfolioItems, setPortfolioItems] = useState<string[]>([]);
-  const [amount, setAmounts] = useState<{ amount: number; minAmount: number }>({
-    amount: 0,
-    minAmount: 0,
+
+  const applyForm = useFormik<{ amount: number; walletAddress: string }>({
+    initialValues: {
+      amount: 0,
+      walletAddress: "",
+    },
+    validationSchema: Yup.object({}),
+    validateOnMount: true,
+    onSubmit: async () => {},
   });
 
   const { data, isPending } = useQuery({
@@ -48,13 +56,16 @@ export default function ApplicationForm() {
   const handleApply = async () => {
     const res = await mutateAsync({
       jobId: id ?? "",
-      amount: amount.amount,
-      minAmount: amount.minAmount,
+      amount: applyForm?.values?.amount,
+      wallet: applyForm?.values?.walletAddress,
       projectIds: portfolioItems,
     });
     if ((res && "error" in res) || (res && res.status === false)) {
       toast.error(res.message ?? "");
     } else if (res && res.data) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("pricing");
+      }
       toast.success(res.message);
       route.push("/job-confirmation");
     }
@@ -62,13 +73,10 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedAmount = localStorage.getItem("prices");
+      const storedAmount = localStorage.getItem("pricing");
       if (storedAmount) {
         const parsedAmount = JSON.parse(storedAmount);
-        setAmounts({
-          amount: parsedAmount.amount,
-          minAmount: parsedAmount.minAmount,
-        });
+        applyForm.setFieldValue("amount", parsedAmount.amount);
       }
     }
   }, []);
@@ -123,7 +131,7 @@ export default function ApplicationForm() {
                     {item?.media?.map((pix, index) => (
                       <div key={index} className="w-[48%]  mx-auto">
                         <Image
-                          src={""}
+                          src={pix?.link}
                           alt=""
                           width={200}
                           height={200}
@@ -136,11 +144,16 @@ export default function ApplicationForm() {
               ))}
           </div>
           <div className="w-[55%] mx-auto">
-            <p className="mb-[1rem] text-[1.8rem]">Portfolio link</p>
+            <p className="mb-[1rem] text-[1.8rem]">Wallet Address</p>
             <div className="border rounded-[.5rem] flex items-center gap-x-[2rem] px-[2.5rem] py-[1.5rem] w-[100%]">
-              <Image src={webIcon} alt="" width={24} height={24} />
+              {/* <Image src={webIcon} alt="" width={24} height={24} /> */}
               <div>
-                <input className="bg-transparent outline-none text-[1.6rem] text-astraLightBlack" />
+                <input
+                  name="walletAddress"
+                  value={applyForm.values.walletAddress}
+                  onChange={applyForm.handleChange}
+                  className="bg-transparent outline-none text-[1.6rem] text-astraLightBlack"
+                />
               </div>
             </div>
           </div>

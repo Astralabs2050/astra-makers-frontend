@@ -1,6 +1,6 @@
 "use client";
 
-import { filterIcon } from "@/image";
+import { filledHeartIcon, filterIcon, heartIcon } from "@/image";
 import { Query } from "@/network/constant";
 import {
   getUserDetails,
@@ -14,6 +14,7 @@ import LoaderSvg from "@/shared/LoaderSvg";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -46,7 +47,11 @@ export default function JobBox() {
       : null;
 
   //Saved Jobs
-  const { data: dataSavedJobs, isPending: isPendingSavedJobs } = useQuery({
+  const {
+    data: dataSavedJobs,
+    isPending: isPendingSavedJobs,
+    refetch,
+  } = useQuery({
     queryFn: makerGetSavedJobs,
     queryKey: [Query.GET_SAVED_JOBS_QUERY],
   });
@@ -58,7 +63,7 @@ export default function JobBox() {
       ? dataSavedJobs.data
       : null;
 
-  const jobs = fetchSaved ? savedJobs : recentJobs;
+  const savedJobsIds = savedJobs?.map((item) => item?.job?.id);
 
   //Handle Save Jobs
   const { mutateAsync } = useMutation({
@@ -72,6 +77,7 @@ export default function JobBox() {
       toast.error(res.message ?? "");
     } else {
       toast.success(res.message);
+      refetch();
     }
   };
 
@@ -125,8 +131,76 @@ export default function JobBox() {
         <div className="flex justify-center items-center py-[3rem]">
           <LoaderSvg color="#000000" />
         </div>
-      ) : jobs && jobs.length > 0 ? (
-        jobs.map((item, index) => (
+      ) : fetchSaved ? (
+        savedJobs && savedJobs.length > 0 ? (
+          savedJobs.map((item, index) => (
+            <div
+              key={index}
+              className="p-[3rem] border rounded-[1rem] w-[100%] mb-[3rem]"
+            >
+              <div className="flex justify-between">
+                <div>
+                  <div className="flex items-center">
+                    <div className="h-[5px] w-[5px] rounded-full bg-astraBlue mr-[.5rem]"></div>
+                    <p className="text-[1.3rem] text-astraBlue">
+                      Posted {dayjs(item?.job?.createdAt).fromNow()}
+                    </p>
+                  </div>
+                  <p className="text-[2rem] mt-[2rem] mb-[1.5rem]">
+                    {item?.job?.design?.outfitName}
+                  </p>
+                  <div className="flex items-center gap-x-[2.5rem]">
+                    <p className="text-[1.5rem] text-astraTextGrey">
+                      No of Pieces: {item?.job?.design?.pieceNumber}
+                    </p>
+                    <p className="text-[1.5rem] text-astraTextGrey">
+                      Due Date:{" "}
+                      {dayjs(item?.job?.timeline).format("DD MMMM, YYYY")}
+                    </p>
+                    <p className="text-[1.5rem] text-astraTextGrey">
+                      Set Budget: ${""}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => handleSave(item?.job?.id)}
+                >
+                  <Image
+                    src={
+                      savedJobsIds?.includes(item?.job?.id)
+                        ? filledHeartIcon
+                        : heartIcon
+                    }
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between items-end mt-[2.2rem]">
+                <p className="text-[1.8rem] text-astraTextGrey w-[70%]">
+                  {item?.job?.description}
+                </p>
+                <Button
+                  action="View Details"
+                  fontSize="text-[1.4rem]"
+                  width="w-[15rem]"
+                  handleClick={() => {
+                    route.push(`/job-details?id=${item?.job?.id}`);
+                  }}
+                  rounded
+                />
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-[1.6rem] py-[4rem] italic flex justify-center items-center">
+            No Saved Jobs Yet
+          </div>
+        )
+      ) : recentJobs && recentJobs.length > 0 ? (
+        recentJobs.map((item, index) => (
           <div
             key={index}
             className="p-[3rem] border rounded-[1rem] w-[100%] mb-[3rem]"
@@ -158,15 +232,16 @@ export default function JobBox() {
                 className="cursor-pointer"
                 onClick={() => handleSave(item?.id)}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="black"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M16.5 3C19.5376 3 22 5.5 22 9C22 16 14.5 20 12 21.5C9.5 20 2 16 2 9C2 5.5 4.5 3 7.5 3C9.35997 3 11 4 12 5C13 4 14.64 3 16.5 3ZM12.9339 18.6038C13.8155 18.0485 14.61 17.4955 15.3549 16.9029C18.3337 14.533 20 11.9435 20 9C20 6.64076 18.463 5 16.5 5C15.4241 5 14.2593 5.56911 13.4142 6.41421L12 7.82843L10.5858 6.41421C9.74068 5.56911 8.5759 5 7.5 5C5.55906 5 4 6.6565 4 9C4 11.9435 5.66627 14.533 8.64514 16.9029C9.39 17.4955 10.1845 18.0485 11.0661 18.6038C11.3646 18.7919 11.6611 18.9729 12 19.1752C12.3389 18.9729 12.6354 18.7919 12.9339 18.6038Z" />
-                </svg>
+                <Image
+                  src={
+                    savedJobsIds?.includes(item?.id)
+                      ? filledHeartIcon
+                      : heartIcon
+                  }
+                  alt=""
+                  width={24}
+                  height={24}
+                />
               </div>
             </div>
             <div className="flex justify-between items-end mt-[2.2rem]">
@@ -187,7 +262,7 @@ export default function JobBox() {
         ))
       ) : (
         <div className="text-[1.6rem] py-[4rem] italic flex justify-center items-center">
-          No {fetchSaved && "Saved"} Jobs Yet
+          No Jobs Yet
         </div>
       )}
     </div>

@@ -383,13 +383,16 @@ export default function ReviewBox() {
                 <hr className="my-[1.4rem]" />
                 <div className="flex">
                   {item.image.map((pic, index) => (
-                    <div key={index} className="w-[48%]  mx-auto">
+                    <div
+                      key={index}
+                      className="w-[48%] h-[30rem] mx-auto flex items-center justify-center overflow-hidden"
+                    >
                       <Image
                         src={pic}
                         alt=""
                         width={200}
                         height={200}
-                        style={{ width: "100%", height: "auto" }}
+                        style={{ width: "auto", height: "100%" }}
                       />
                     </div>
                   ))}

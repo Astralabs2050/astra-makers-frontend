@@ -1,7 +1,11 @@
 "use client";
 
 import { actionIcon, filterIcon, report, withdrawIcon } from "@/image";
+import { Query } from "@/network/constant";
+import { getOngoingJobs } from "@/network/ongoingJobs";
 import ButtonWithIcon from "@/shared/ButtonWithIcon";
+import LoaderSvg from "@/shared/LoaderSvg";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -94,6 +98,13 @@ export function JobBox({
 
 export default function OngoingJobBox() {
   const [category, setCategory] = useState<string>("");
+  //User Details
+  const { data, isPending } = useQuery({
+    queryFn: getOngoingJobs,
+    queryKey: [Query.GET_ONGOING_JOBS_QUERY],
+  });
+  const ongoingJobs =
+    data && data.status === true && !("error" in data) ? data.data : null;
   return (
     <div className="px-[10rem] py-[5rem] w-[100%]">
       <div className="flex items-center justify-between">
@@ -149,45 +160,22 @@ export default function OngoingJobBox() {
       </div>
       <hr className="mt-[1.5rem] mb-[5rem]" />
       <div className="flex flex-wrap overflow-x-hidden gap-[1.8rem]">
-        {[
-          {
-            status: "Awaiting decision",
-            dueDate: "27/11/24",
-            title: "Turn fashion images to Physical product",
-            brandName: "AXL Fashion Fit  (Name of Brand)",
-            applicationDate: "Oct 9, 2023 11:46 AM",
-          },
-          {
-            status: "Withdrawn",
-            dueDate: "27/11/24",
-            title: "Turn fashion images to Physical product",
-            brandName: "AXL Fashion Fit  (Name of Brand)",
-            applicationDate: "Oct 9, 2023 11:46 AM",
-          },
-          {
-            status: "Not selected by creator",
-            dueDate: "27/11/24",
-            title: "Turn fashion images to Physical product",
-            brandName: "AXL Fashion Fit  (Name of Brand)",
-            applicationDate: "Oct 9, 2023 11:46 AM",
-          },
-          {
-            status: "Selected by Creator",
-            dueDate: "27/11/24",
-            title: "Turn fashion images to Physical product",
-            brandName: "AXL Fashion Fit  (Name of Brand)",
-            applicationDate: "Oct 9, 2023 11:46 AM",
-          },
-        ].map((item, index) => (
-          <JobBox
-            key={index}
-            status={item.status}
-            dueDate={item.dueDate}
-            title={item.title}
-            brandName={item.brandName}
-            applicationDate={item.applicationDate}
-          />
-        ))}
+        {isPending ? (
+          <div className="flex items-center justify-center py-[4rem] w-[100%]">
+            <LoaderSvg color="#000000" />
+          </div>
+        ) : (
+          ongoingJobs?.map((item, index) => (
+            <JobBox
+              key={index}
+              status="Awaiting decision"
+              dueDate={item.timeline}
+              title={item?.design?.outfitName}
+              brandName={item.user?.email}
+              applicationDate={""}
+            />
+          ))
+        )}
       </div>
     </div>
   );

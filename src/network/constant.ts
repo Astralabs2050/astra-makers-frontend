@@ -17,13 +17,14 @@ const GET_SAVED_JOBS = "job/save-job" as const;
 const GET_SINGLE_JOB = "job/get-job/" as const;
 const GET_USER_PROJECTS = "user/project" as const;
 const APPLY_TO_JOB = "job/apply-job" as const;
+const GET_ONGOING_JOBS = "job/ongoing-job-application?status=";
 
 const GET_USER_DETAILS_QUERY = "GET_USER_DETAILS_QUERY" as const;
 const MAKER_GET_JOBS_QUERY = "MAKER_GET_JOBS_QUERY" as const;
 const GET_SAVED_JOBS_QUERY = "GET_SAVED_JOBS_QUERY" as const;
 const GET_SINGLE_JOB_QUERY = "GET_SINGLE_JOB_QUERY" as const;
 const GET_USER_PROJECTS_QUERY = "GET_USER_PROJECTS_QUERY" as const;
-
+const GET_ONGOING_JOBS_QUERY = "GET_ONGOING_JOBS_QUERY" as const;
 export const Endpoints = {
   SIGNUP,
   VERIFY_OTP,
@@ -38,10 +39,12 @@ export const Endpoints = {
   GET_SINGLE_JOB,
   GET_USER_PROJECTS,
   APPLY_TO_JOB,
+  GET_ONGOING_JOBS,
 };
 
 export const Query = {
   GET_USER_DETAILS_QUERY,
+  GET_ONGOING_JOBS_QUERY,
   MAKER_GET_JOBS_QUERY,
   GET_SAVED_JOBS_QUERY,
   GET_SINGLE_JOB_QUERY,

@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 export function TextBox({ title, text }: { title: string; text: string }) {
   return (
@@ -42,9 +43,9 @@ export default function JobInfo() {
       price: Yup.number()
         .required("Please enter your price")
         .min(1, "Please enter your price"),
-      minimumPrice: Yup.number()
-        .required("Please enter your minimum price")
-        .min(1, "Please enter your minimum price"),
+      minimumPrice: Yup.number(),
+      // .required("Please enter your minimum price")
+      // .min(1, "Please enter your minimum price"),
     }),
     validateOnMount: true,
     onSubmit: () => {},
@@ -67,6 +68,18 @@ export default function JobInfo() {
       route.push(`/application?id=${id}`);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAmount = localStorage.getItem("pricing");
+      if (storedAmount) {
+        const parsedAmount = JSON.parse(storedAmount);
+        applyForm.setFieldValue("price", parsedAmount.amount);
+        applyForm.setFieldValue("minimumPrice", parsedAmount.minAmount);
+      }
+    }
+  }, []);
+
   if (isPending) {
     return (
       <div className="flex justify-center items-center py-[4rem] w-[100%]">
@@ -160,7 +173,7 @@ export default function JobInfo() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between p-[3rem]">
+              {/* <div className="flex items-center justify-between p-[3rem]">
                 <div>
                   <p className="text-[1.6rem] mb-[1rem]">
                     What is your minimum amount for negotiation?
@@ -185,7 +198,7 @@ export default function JobInfo() {
                     $ {applyForm.values.minimumPrice}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="border rounded-[2rem] p-[3rem] h-[max-content] min-w-[25vw]">
@@ -199,12 +212,10 @@ export default function JobInfo() {
                 className="rounded-full"
               />
             </div>
-            <p className="text-[1.5rem]">{singleJob?.user?.email}</p>
+            <p className="text-[1.5rem]">{singleJob?.user?.brand?.username}</p>
             <p className="text-[1.5rem] my-[3rem] text-astraTextGrey">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam. uis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              {`${singleJob?.user?.brand?.username} is one of our creators on the
+              platform. Please read through the job description and enter a price before applying.`}
             </p>
             <div className="mb-[2rem]">
               <p className="text-[1.5rem] mb-[.5rem]">Date posted:</p>

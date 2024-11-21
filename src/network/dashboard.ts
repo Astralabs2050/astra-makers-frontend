@@ -143,6 +143,13 @@ interface SingleUser {
   userType: string | null;
   createdAt: string;
   updatedAt: string;
+  brand: {
+    id: string;
+    username: string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 interface SingleJobData {
@@ -185,8 +192,58 @@ interface Project {
 interface ApplyToJobRequest {
   jobId: string;
   amount: number;
-  minAmount: number;
+  wallet: string;
   projectIds: string[];
+}
+
+interface SavedJobData {
+  id: string;
+  jobId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  job: SavedJob;
+  user: SavedUser;
+}
+
+interface SavedJob {
+  id: string;
+  description: string;
+  timeline: string;
+  status: boolean;
+  timelineStatus: string | null;
+  manufacturer: boolean;
+  makerId: string | null;
+  userId: string;
+  designId: string;
+  createdAt: string;
+  updatedAt: string;
+  design: SavedDesign;
+}
+
+interface SavedDesign {
+  id: string;
+  outfitName: string;
+  pieceNumber: number;
+  prompt: string;
+  publicKey: string | null;
+  creatorType: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface SavedUser {
+  id: string;
+  email: string;
+  verified: boolean;
+  active: boolean;
+  lastseen: string | null;
+  otp: string;
+  isAdmin: boolean;
+  userType: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const getUserDetails = async (): Promise<BaseResponse<UserData>> => {
@@ -197,8 +254,10 @@ export const makerGetJobs = async (): Promise<BaseResponse<JobData[]>> => {
   return API.get<JobData[]>(Endpoints.MAKER_GET_JOBS);
 };
 
-export const makerGetSavedJobs = async (): Promise<BaseResponse<JobData[]>> => {
-  return API.get<JobData[]>(Endpoints.GET_SAVED_JOBS);
+export const makerGetSavedJobs = async (): Promise<
+  BaseResponse<SavedJobData[]>
+> => {
+  return API.get<SavedJobData[]>(Endpoints.GET_SAVED_JOBS);
 };
 
 export const saveJobs = async (

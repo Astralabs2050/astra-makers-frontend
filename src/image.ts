@@ -35,6 +35,7 @@ const activeSettingsIcon = "/lightSettingsIcon.svg";
 const helpAndSupportIcon = "/darkHelpAndSupportIcon.svg";
 const filterIcon = "/filterIcon.svg";
 const heartIcon = "/heartIcon.svg";
+const filledHeartIcon = "/filled.svg";
 const goBackIcon = "/goBack.svg";
 const sample1 = "/genImage1.png";
 const sample2 = "/genImage2.png";
@@ -64,9 +65,16 @@ const settingsBack = "/back.svg";
 const uploadPicIcon = "/uploadPic.svg";
 const settingsUpload = "/Textfield.svg";
 const verifiedIcon = "/Verify.svg";
+const searchIcon = "/searchIcon.svg";
+const paymentIcon = "/payment.svg";
+const paperClipIcon = "/Paperclip.svg";
 
 export {
+  searchIcon,
+  paymentIcon,
+  paperClipIcon,
   verifiedIcon,
+  filledHeartIcon,
   settingsUpload,
   settingsBack,
   uploadPicIcon,
