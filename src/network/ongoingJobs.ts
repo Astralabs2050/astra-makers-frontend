@@ -46,6 +46,15 @@ export interface User {
   updatedAt: string; // ISO 8601 date string
 }
 
-export const getOngoingJobs = async (): Promise<BaseResponse<Job[]>> => {
-  return API.get<Job[]>(Endpoints.GET_ONGOING_JOBS);
+interface onGoingJobsData {
+  filterStatus: string;
+  userId: string;
+}
+
+export const getOngoingJobs = async (
+  payload: onGoingJobsData
+): Promise<BaseResponse<Job[]>> => {
+  return API.get<Job[]>(
+    `${Endpoints.GET_ONGOING_JOBS}?status=${payload.filterStatus}&id=${payload.userId}`
+  );
 };

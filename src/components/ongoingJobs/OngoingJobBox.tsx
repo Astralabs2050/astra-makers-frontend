@@ -7,6 +7,7 @@ import ButtonWithIcon from "@/shared/ButtonWithIcon";
 import LoaderSvg from "@/shared/LoaderSvg";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function JobBox({
@@ -98,11 +99,13 @@ export function JobBox({
 
 export default function OngoingJobBox() {
   const [category, setCategory] = useState<string>("");
-  //User Details
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const { data, isPending } = useQuery({
-    queryFn: getOngoingJobs,
+    queryFn: () => getOngoingJobs({ filterStatus: "all", userId: id ?? "" }),
     queryKey: [Query.GET_ONGOING_JOBS_QUERY],
   });
+
   const ongoingJobs =
     data && data.status === true && !("error" in data) ? data.data : null;
   return (

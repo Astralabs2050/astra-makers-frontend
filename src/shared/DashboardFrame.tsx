@@ -18,9 +18,10 @@ import {
   profilePicture,
   settingsIcon,
 } from "@/image";
+import { USER_PROFILE } from "@/network/constant";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface DashboardFrameProps {
   children: React.ReactNode;
@@ -34,6 +35,16 @@ export default function DashboardFrame({
   const route = useRouter();
   const pathname = usePathname();
   const [minimize, setMinimize] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string>("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProfile = sessionStorage.getItem(USER_PROFILE);
+      if (storedProfile) {
+        const parsedProfile = JSON.parse(storedProfile);
+        setUserId(parsedProfile.id);
+      }
+    }
+  }, []);
   return (
     <div className="w-[100vw] overflow-x-hidden">
       <div className="flex justify-between items-center py-[1.2rem] pr-[10rem] pl-[5rem] border-b">
@@ -91,8 +102,8 @@ export default function DashboardFrame({
                   name: "Ongoing Jobs",
                   icon: ongoingJobsIcon,
                   activeIcon: activeOngoingJobsIcon,
-                  url: "/ongoing-jobs",
-                  active: pathname === "/ongoing-jobs",
+                  url: `/ongoing-jobs?id=${userId}`,
+                  active: pathname.startsWith("/ongoing-jobs"),
                 },
                 {
                   name: "Earnings",

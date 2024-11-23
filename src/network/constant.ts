@@ -17,7 +17,7 @@ const GET_SAVED_JOBS = "job/save-job" as const;
 const GET_SINGLE_JOB = "job/get-job/" as const;
 const GET_USER_PROJECTS = "user/project" as const;
 const APPLY_TO_JOB = "job/apply-job" as const;
-const GET_ONGOING_JOBS = "job/ongoing-job-application?status=";
+const GET_ONGOING_JOBS = "job/ongoing-job-application";
 
 const GET_USER_DETAILS_QUERY = "GET_USER_DETAILS_QUERY" as const;
 const MAKER_GET_JOBS_QUERY = "MAKER_GET_JOBS_QUERY" as const;
