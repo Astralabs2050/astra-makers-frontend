@@ -1,8 +1,10 @@
+
 import React from 'react'
 
-function Message({message, sender}:{
+function Message({message, sender, profile}:{
     message:string,
     sender: boolean
+    profile?:string
 }) {
   return (
     <div style={{
@@ -11,7 +13,7 @@ function Message({message, sender}:{
         <div className='w-[300px] text-[15px] bg-[#33333308] p-4 rounded-tl-lg rounded-tr-lg rounded-bl-lg '>
             {message}
         </div>
-        <div className='w-[30px] h-[30px] bg-black rounded-[100%]'></div>
+       {profile ? <img className='w-[30px] h-[30px]' src={profile} alt="profile"/> : <div className='w-[30px] h-[30px] bg-black rounded-[100%]'></div>}
     </div>
   )
 }

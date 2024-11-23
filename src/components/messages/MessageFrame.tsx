@@ -13,14 +13,32 @@ import Header from "./Header";
 import ChatControl from "./ChatControl";
 import ChatBox from "./ChatBox";
 import User from "./User";
+import { USER_PROFILE } from "@/network/constant";
 
 export default function MessageFrame() {
   const [isConnected, setIsConnected] = useState(false);
   const [messageBox, setMessageBox] = useState("");
   const [chatMessages, setChatMessages] = useState<
-    { message: string; sender: boolean }[]
+    {
+      message: string,
+      sender: boolean, 
+      receiverProfile?: string | null,
+      senderProfile?: string | null
+    }[]
   >([]);
   const [brands, setBrands] = useState([])
+  const [brandId, setBrandId] = useState(null)
+  const getUserId = () => {
+    try {
+        const userProfile = window && sessionStorage.getItem('USER_PROFILE');
+        return userProfile ? JSON.parse(userProfile)?.id : null;
+    } catch (error) {
+        console.error("Error parsing USER_PROFILE from sessionStorage:", error);
+        return null;
+    }
+};
+
+const userId = getUserId();
 
   useEffect(() => {
     // Connect to socket instance
@@ -30,18 +48,28 @@ export default function MessageFrame() {
     Socket.on("connection_status", (data: boolean) => {
       setIsConnected(data);
     });
-
+    //get previous message 
+    Socket.on("privateMessage",(data)=>{
+      console.log("reaching here priveate")
+        // Fetch previous messages
+      Socket.emit("get_previous_messages", {
+      senderId: userId,
+      receiverId: brandId?.maker?.id === userId ? brandId?.userId : brandId?.maker?.id,
+    });
+    })
     // Fetch previous messages
     Socket.emit("get_previous_messages", {
-      senderId: "071f2316-610f-45f6-b257-acd65402dc71",
-      receiverId: "071f2316-610f-45f6-b257-acd65402dc71",
+      senderId: userId,
+      receiverId: brandId?.maker?.id === userId ? brandId?.userId : brandId?.maker?.id,
     });
 
     Socket.on("previous_messages", (data: any) => {
-      console.log("datadata11",data)
+      console.log(" ",data[0])
       const allMessages = data.map((allMessage: any) => ({
         message: allMessage?.message,
-        sender: allMessage?.senderId === "071f2316-610f-45f6-b257-acd65402dc71",
+        sender: allMessage?.senderId === userId,
+        receiverProfile: allMessage?.receiver?.media[0]?.link || allMessage?.receiver?.media?.link,
+        senderProfile: allMessage?.sender?.media[0]?.link || allMessage?.sender?.media?.link
       }));
       setChatMessages(allMessages);
     });
@@ -54,7 +82,7 @@ export default function MessageFrame() {
       Socket.off("get_brands")
       Socket.off("previous_messages");
     };
-  }, []);
+  }, [brandId]);
 
 
 useEffect(()=>{
@@ -65,6 +93,7 @@ useEffect(()=>{
     setBrands(data)
   })
 },[])
+console.log("brandId?.maker?.id",brandId)
   const sendMessage = () => {
     const tempMessage = {
       message: messageBox,
@@ -81,8 +110,8 @@ useEffect(()=>{
     Socket.emit(
       "privateMessage",
       {
-        receiverId: "071f2316-610f-45f6-b257-acd65402dc71",
-        senderId: "071f2316-610f-45f6-b257-acd65402dc71",
+        receiverId: brandId?.maker?.id === userId ? brandId?.userId : brandId?.maker?.id,
+        senderId: userId,
         createdAt: Date.now(),
         type: "text",
         message: tempMessage.message,
@@ -113,21 +142,21 @@ useEffect(()=>{
       <div className="h-[80vh] mt-2 overflow-y-auto">
        {
         brands?.map((a,i)=>{
-          return  <User user={a}/>
+          return  <User user={a} brandId={brandId} setBrandId={setBrandId}/>
         })
        
        }
       </div>
       </div>
-      <div className="w-[75%] flex h-[100%] flex-col ">
-        <Header />
+      {brandId && <div className="w-[75%] flex h-[100%] flex-col ">
+        <Header brandId={brandId}/>
         <ChatBox messages={chatMessages} />
         <ChatControl
           sendMessage={sendMessage}
           messageBox={messageBox}
           setMessageBox={setMessageBox}
         />
-      </div>
+      </div>}
     </div>
   );
 }

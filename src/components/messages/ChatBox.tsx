@@ -4,11 +4,13 @@ import Message from './Message';
 function ChatBox({ messages }: { 
   messages: { 
     message: string; 
+    receiverProfile?: string;
+    senderProfile?: string;
     sender: boolean; 
   }[] 
 }) {
   const chatBoxRef = useRef<HTMLDivElement>(null);
-
+  console.log("messages11",messages)
   useEffect(() => {
     // Scroll to the bottom whenever messages change
     if (chatBoxRef.current) {
@@ -25,6 +27,7 @@ function ChatBox({ messages }: {
         <Message 
           message={message.message} 
           sender={message.sender} 
+          profile={message?.sender ?  message?.receiverProfile : message?.senderProfile}
           key={index} 
         />
       ))}
