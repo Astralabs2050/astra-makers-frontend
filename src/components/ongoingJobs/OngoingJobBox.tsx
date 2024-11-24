@@ -6,6 +6,7 @@ import { getOngoingJobs } from "@/network/ongoingJobs";
 import ButtonWithIcon from "@/shared/ButtonWithIcon";
 import LoaderSvg from "@/shared/LoaderSvg";
 import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -102,8 +103,8 @@ export default function OngoingJobBox() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const { data, isPending } = useQuery({
-    queryFn: () => getOngoingJobs({ filterStatus: "all", userId: id ?? "" }),
-    queryKey: [Query.GET_ONGOING_JOBS_QUERY],
+    queryFn: () => getOngoingJobs({ filterStatus: category, userId: id ?? "" }),
+    queryKey: [Query.GET_ONGOING_JOBS_QUERY, category],
   });
 
   const ongoingJobs =
@@ -152,14 +153,14 @@ export default function OngoingJobBox() {
         >
           Completed
         </p>
-        <p
+        {/* <p
           className={`text-[1.6rem] flex items-center justify-center py-[1.2rem] rounded-full font-[500] cursor-pointer min-w-[14rem] ${
             category === "all" && "bg-astraSilver"
           }`}
-          onClick={() => setCategory("all")}
+          onClick={() => setCategory("")}
         >
           All Jobs
-        </p>
+        </p> */}
       </div>
       <hr className="mt-[1.5rem] mb-[5rem]" />
       <div className="flex flex-wrap overflow-x-hidden gap-[1.8rem]">
@@ -174,8 +175,10 @@ export default function OngoingJobBox() {
               status="Awaiting decision"
               dueDate={item.timeline}
               title={item?.design?.outfitName}
-              brandName={item.user?.email}
-              applicationDate={""}
+              brandName={item.user?.brand?.username}
+              applicationDate={dayjs(item.createdAt).format(
+                "MMM D, YYYY h:mm A"
+              )}
             />
           ))
         )}

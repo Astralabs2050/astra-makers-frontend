@@ -9,7 +9,6 @@ import User from "./User";
 import { USER_PROFILE } from "@/network/constant";
 import ChatControl from "./ChatControl";
 import LoaderSvg from "@/shared/LoaderSvg";
-import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getWalletBalance } from "@/network/messaging";
 import { UserP } from "./MessageTypes";
@@ -108,6 +107,7 @@ export default function MessageFrame() {
   }, []);
   console.log("brandId?.maker?.id", brandId);
   const sendMessage = () => {
+    refetch();
     const tempMessage = {
       message: messageBox,
       sender: true, // Assume the current user is the sender
@@ -144,7 +144,6 @@ export default function MessageFrame() {
 
   const shopperAddress =
     "GDL5LVUDI2GEA765TFFMEHH3KVLR63IE3OCRIJAZM7N3LM6NYADAYKBG";
-  const [isLoadingMileStone, setIsLoadingMileStone] = useState(false);
 
   // const [balance, setBalance] = useState<string | null>(null);
   // Function to fetch escrow balance
@@ -156,31 +155,6 @@ export default function MessageFrame() {
   });
   const walletBalance =
     data && !error === true && !("error" in data) ? data.balance : null;
-
-  // Function to complete a milestone
-  const completeMilestone = async () => {
-    setIsLoadingMileStone(true);
-    try {
-      const response = await fetch("/api/complete-milestone", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: shopperAddress,
-        }),
-      });
-      const data = await response.json();
-      const statusMessage = data.status;
-      toast.success(statusMessage);
-      setIsLoadingMileStone(false);
-      refetch();
-    } catch (err) {
-      console.error("Failed to complete milestone", err);
-      toast.error("Failed to complete milestone");
-      setIsLoadingMileStone(false);
-    }
-  };
 
   return (
     <div className="flex w-[100%] bg-white">
@@ -258,19 +232,6 @@ export default function MessageFrame() {
               messageBox={messageBox}
               setMessageBox={setMessageBox}
             />
-            <button
-              onClick={completeMilestone}
-              className="border rounded-full text-[1.4rem] py-[1.5rem] px-[1.2rem] border-black min-w-[18rem]"
-            >
-              {isLoadingMileStone ? (
-                <div className="flex items-center justify-center">
-                  {" "}
-                  <LoaderSvg color="#000000" />
-                </div>
-              ) : (
-                "Milestone Completed"
-              )}
-            </button>
           </div>
         </div>
       )}
