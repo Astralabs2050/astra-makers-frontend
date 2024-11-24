@@ -1,16 +1,18 @@
-import React, { useEffect, useRef } from 'react';
-import Message from './Message';
+import React, { useEffect, useRef } from "react";
+import Message from "./Message";
 
-function ChatBox({ messages }: { 
-  messages: { 
-    message: string; 
+function ChatBox({
+  messages,
+}: {
+  messages: {
+    message: string;
     receiverProfile?: string;
     senderProfile?: string;
-    sender: boolean; 
-  }[] 
+    sender: boolean;
+  }[];
 }) {
   const chatBoxRef = useRef<HTMLDivElement>(null);
-  console.log("messages11",messages)
+  console.log("messages11", messages);
   useEffect(() => {
     // Scroll to the bottom whenever messages change
     if (chatBoxRef.current) {
@@ -19,16 +21,15 @@ function ChatBox({ messages }: {
   }, [messages]);
 
   return (
-    <div 
-      ref={chatBoxRef} 
-      className="h-[65vh] bg-[#ffffff00] overflow-y-auto"
-    >
+    <div ref={chatBoxRef} className="h-[65vh] overflow-y-auto w-full">
       {messages.map((message, index) => (
-        <Message 
-          message={message.message} 
-          sender={message.sender} 
-          profile={message?.sender ?  message?.receiverProfile : message?.senderProfile}
-          key={index} 
+        <Message
+          message={message.message}
+          sender={message.sender}
+          profile={
+            message?.sender ? message?.receiverProfile : message?.senderProfile
+          }
+          key={index}
         />
       ))}
     </div>

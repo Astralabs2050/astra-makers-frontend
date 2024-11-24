@@ -8,6 +8,7 @@ interface USERFUNCTION {
 }
 function User({ user, brandId, setBrandId }: USERFUNCTION) {
   console.log("this is the brand info", user?.id);
+  console.log("user", user);
   return (
     <div
       style={{
@@ -20,10 +21,8 @@ function User({ user, brandId, setBrandId }: USERFUNCTION) {
     >
       <div className="bg-astraGreyBg rounded-[1rem] py-[1.5rem] px-[2rem] ">
         <div className="flex items-center justify-between ">
-          <p className="text-[1.5rem]">
-            {user?.maker?.creator?.fullName || user?.maker?.brand?.username}
-          </p>
-          <p className="text-[1.5rem] text-astraTextGrey">2:28PM</p>
+          <p className="text-[1.5rem]">{user?.user?.brand?.username}</p>
+          {/* <p className="text-[1.5rem] text-astraTextGrey">2:28PM</p> */}
         </div>
         <p className="text-[1.5rem] text-black font-bold mt-[.8rem] mb-[1rem]">
           {user?.design?.outfitName}

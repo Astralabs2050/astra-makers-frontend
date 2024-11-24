@@ -38,8 +38,10 @@ export default function MessageFrame() {
       sender: boolean;
     }[]
   >([]);
+
   const [brands, setBrands] = useState<UserP[]>([]);
   const [brandId, setBrandId] = useState<UserP | null>(null);
+  console.log("brand p", brandId);
   const getUserId = () => {
     try {
       const userProfile = window && sessionStorage.getItem(USER_PROFILE);
@@ -197,17 +199,9 @@ export default function MessageFrame() {
               />
               <div>
                 <p className="font-bold text-[1.8rem]">
-                  {isCreator
-                    ? brandId?.user?.creator?.fullName ||
-                      brandId?.user?.brand?.username
-                    : brandId?.maker?.creator?.fullName ||
-                      brandId?.maker?.brand?.username}
+                  {brandId.user.brand?.username}
                 </p>
-                <p className="text-[1.4rem]">
-                  {isCreator
-                    ? brandId?.user?.creator?.category[0] || "Creator"
-                    : brandId?.maker?.creator?.category[0] || "Brand"}
-                </p>
+                <p className="text-[1.4rem]">Brand</p>
               </div>
             </div>
             <div className="flex px-[2rem] py-[1rem] items-center bg-[radial-gradient(44.96%_391.37%_at_49.64%_50%,_#3F37C9_2.67%,_#4361EE_100%)] rounded-full w-[max-content]">
