@@ -2,7 +2,7 @@ export const TOKEN_NAME = "ASTRA_TOKEN" as const;
 export const EMAIL = "EMAIL" as const;
 export const RESET_PASSWORD_EMAIL = "RESET_PASSWORD_EMAIL";
 export const USER_PROFILE = "USER_PROFILE";
-export const API_URL = "51.20.37.218:3002/" as const;
+export const API_URL = "http://51.20.37.218:3002/" as const;
 
 const SIGNUP = "auth/register/creator/step-1" as const;
 const VERIFY_OTP = "auth/otp-verification" as const;

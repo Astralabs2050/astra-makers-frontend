@@ -147,12 +147,12 @@ export default function ApplicationForm() {
             <p className="mb-[1rem] text-[1.8rem]">Wallet Address</p>
             <div className="border rounded-[.5rem] flex items-center gap-x-[2rem] px-[2.5rem] py-[1.5rem] w-[100%]">
               {/* <Image src={webIcon} alt="" width={24} height={24} /> */}
-              <div>
+              <div className="w-[100%]">
                 <input
                   name="walletAddress"
                   value={applyForm.values.walletAddress}
                   onChange={applyForm.handleChange}
-                  className="bg-transparent outline-none text-[1.6rem] text-astraLightBlack"
+                  className="bg-transparent outline-none text-[1.6rem] text-astraLightBlack w-[100%]"
                 />
               </div>
             </div>
