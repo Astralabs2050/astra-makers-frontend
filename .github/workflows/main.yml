@@ -28,12 +28,12 @@ jobs:
         env:
           NODE_ENV: production
         run: npm run build
-
       - name: Deploy the application
-        
-        run: |
-          git pull origin main
-          npm install
-          pm2 reload ecosystem.config.js --update-env
-          pm2 start "npm run start" --name "next-app" --update-env
         shell: bash
+        run: |
+          cd C:/Users/Administrator/Documents/actions-runner/_work/astra-makers-frontend/astra-makers-frontend
+          npm install
+          npm run build
+          pm2 reload ecosystem.config.js --update-env
+          pm2 start npm --name "next-app" -- start
+      
