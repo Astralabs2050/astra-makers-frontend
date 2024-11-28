@@ -16,7 +16,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16" # Ensure it matches your Next.js project's requirements
+          node-version: "18.17.0" # Update to a compatible version for Next.js
+
+      - name: Verify Node.js version
+        run: node -v
 
       - name: Install dependencies
         run: npm install
@@ -27,21 +30,7 @@ jobs:
         run: npm run build
 
       - name: Deploy the application
-        env:
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          APP_URL: ${{ secrets.APP_URL }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          OPEN_API_KEY: ${{ secrets.OPEN_API_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+        
         run: |
           git pull origin main
           npm install
