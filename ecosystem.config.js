@@ -1,17 +1,16 @@
 module.exports = {
   apps: [
     {
-       name: "next-app",
+      name: "next-app",
       script: "npm",
-      args: "start",
-      interpreter: "none", // Ensures npm is run as a shell command
-      interpreter_args: "-r ts-node/register", // Register ts-node to compile TypeScript on the fly
+      args: "start", // This will run 'npm start'
+      interpreter: "none", // No need to specify a custom interpreter
       watch: true, // Optional: Enable file watching
       env: {
-      
+        // Define environment variables here if needed
       },
       env_production: {
-       
+        // Define production-specific environment variables here if needed
       },
     },
   ],
