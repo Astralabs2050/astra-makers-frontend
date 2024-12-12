@@ -1,16 +1,15 @@
 module.exports = {
   apps: [
     {
-      name: "next-app",
-      script: "npm",
-      args: "start", // This will run 'npm start'
-      interpreter: "none", // No need to specify a custom interpreter
-      watch: true, // Optional: Enable file watching
+      name: "makers-frontend-app",
+      script: "yarn", // Use yarn instead of npm
+      args: "start", // This will run 'yarn start'
+      watch: true, // Optional: Enable file watching for auto-restarts
       env: {
-        // Define environment variables here if needed
+        NODE_ENV: "development", // You can define dev-specific env variables
       },
       env_production: {
-        // Define production-specific environment variables here if needed
+        NODE_ENV: "production", // Define production-specific environment variables
       },
     },
   ],
