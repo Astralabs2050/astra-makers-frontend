@@ -34,4 +34,5 @@ jobs:
           cd C:/Users/Administrator/Documents/actions-runner/_work/astra-makers-frontend/astra-makers-frontend
           npm install
           npm run build
-          yarn start -port 3004
+          export PORT=3004 # Set the application to run on port 3004
+          yarn start
