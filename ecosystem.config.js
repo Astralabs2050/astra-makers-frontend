@@ -2,14 +2,14 @@ module.exports = {
   apps: [
     {
       name: "makers-frontend-app",
-      script: "yarn", // Use yarn instead of npm
-      args: "start", // This will run 'yarn start'
-      watch: true, // Optional: Enable file watching for auto-restarts
+      script: "cmd.exe",
+      args: "/c yarn start", // Run 'yarn start' via cmd.exe
+      watch: false,
       env: {
-        NODE_ENV: "development", // You can define dev-specific env variables
+        NODE_ENV: "development",
       },
       env_production: {
-        NODE_ENV: "production", // Define production-specific environment variables
+        NODE_ENV: "production",
       },
     },
   ],
