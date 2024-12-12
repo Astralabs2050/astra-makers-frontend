@@ -28,11 +28,17 @@ jobs:
         env:
           NODE_ENV: production
         run: npm run build
-      - name: Deploy the application
+      - name: Start the Next.js application
         shell: bash
         run: |
           cd C:/Users/Administrator/Documents/actions-runner/_work/astra-makers-frontend/astra-makers-frontend
-          npm install
-          npm run build
+          yarn install
+          yarn build
           export PORT=3004 # Set the application to run on port 3004
-          start yarn start
+          nohup yarn start > nextjs.log 2>&1 & # Start in the background and log output
+
+      - name: Display application logs
+        shell: bash
+        run: |
+          cd C:/Users/Administrator/Documents/actions-runner/_work/astra-makers-frontend/astra-makers-frontend
+          tail -n 50 nextjs.log # Display the last 50 lines of logs for debugging
