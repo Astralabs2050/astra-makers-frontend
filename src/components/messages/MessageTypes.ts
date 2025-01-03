@@ -18,7 +18,7 @@ export interface Brand {
   pieceNumber: number;
   prompt: string;
   designId: string;
-  maker: string | Maker | null; // Allow both string and Maker for flexibility
+  maker: string | Maker | null;
   makerId: string | null;
   manufacturer: boolean;
   userId: string;
