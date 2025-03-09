@@ -66,6 +66,7 @@ export default function ApplicationForm() {
       if (typeof window !== "undefined") {
         localStorage.removeItem("pricing");
       }
+
       toast.success(res.message);
       route.push("/job-confirmation");
     }

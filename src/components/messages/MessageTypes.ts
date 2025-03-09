@@ -142,7 +142,7 @@ export interface UserP {
   designId: string;
   manufacturer: boolean;
   makerId: string | null;
-  maker: Maker | null; // Expecting a Maker object or null
+  maker: Maker | null;
   userId: string;
   user: User;
   design: Design;

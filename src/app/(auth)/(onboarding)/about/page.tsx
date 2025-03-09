@@ -5,6 +5,7 @@ import { Suspense } from "react";
 export default function About() {
   return (
     <div>
+      {/* For Dynamic render, usually useParam */}
       <Suspense
         fallback={
           <div className="flex justify-center items-center my-[3rem]">

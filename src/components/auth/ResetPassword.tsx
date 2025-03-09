@@ -33,7 +33,7 @@ export default function ResetPasswordForm() {
     mutationFn: resetPassword,
   });
 
-  //Login form
+  //Rese Password Form
   const resetPasswordForm = useFormik<{
     password: string;
     confirmPassword: string;
